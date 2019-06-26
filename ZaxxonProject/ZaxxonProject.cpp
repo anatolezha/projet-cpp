@@ -3,10 +3,14 @@
 
 #include "pch.h"
 #include <iostream>
+#include "Game.h"
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	Game g;
+	g.run();
+
+
 }
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
