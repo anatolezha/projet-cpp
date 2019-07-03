@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 
+const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game() : mWindow(sf::VideoMode(840, 600), "Space Invaders 1978", sf::Style::Close)
 {
