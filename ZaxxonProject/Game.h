@@ -6,6 +6,7 @@ public:
 	Game();
 	~Game();
 	void update(sf::Time elapsedTime);
+	void HanldeWeaponMoves();
 	void run();
 
 
@@ -23,6 +24,7 @@ private:
 	static const sf::Time	TimePerFrame;
 
 	sf::Texture	mTexture;
+	sf::Texture	_TextureWeapon;
 	sf::Sprite	mPlayer;
 	sf::Font	mFont;
 	sf::Text	mStatisticsText;
@@ -33,6 +35,9 @@ private:
 	bool mIsMovingDown;
 	bool mIsMovingRight;
 	bool mIsMovingLeft;
+
+	bool _IsPlayerWeaponFired = false;
+
 
 
 	sf::RenderWindow		mWindow;

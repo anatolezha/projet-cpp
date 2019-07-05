@@ -17,6 +17,8 @@ Game::Game() : mWindow(sf::VideoMode(840, 600), "Zaxxon Project", sf::Style::Clo
 {
 	mWindow.setFramerateLimit(160);
 	mTexture.loadFromFile("Media/textures/playerSpaceship.png");
+	_TextureWeapon.loadFromFile("Media/textures/boss.png");
+
 	
 	InitSprites();
 }
@@ -99,6 +101,32 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 	else if (key == sf::Keyboard::Right)
 		mIsMovingRight = isPressed;
 
+
+	if (key == sf::Keyboard::Space)
+	{
+		if (isPressed == false)
+		{
+			return;
+		}
+
+		if (_IsPlayerWeaponFired == true)
+		{
+			return;
+		}
+
+		std::shared_ptr<Entity> sw = std::make_shared<Entity>();
+		sw->m_sprite.setTexture(_TextureWeapon);
+		sw->m_sprite.setPosition(
+			EntityManager::GetPlayer()->m_sprite.getPosition().x + EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().x / 2,
+			EntityManager::GetPlayer()->m_sprite.getPosition().y - 10);
+		sw->m_sprite.setRotation(90.f);
+		sw->m_type = EntityType::weapon;
+		sw->m_size = _TextureWeapon.getSize();
+		EntityManager::m_Entities.push_back(sw);
+
+		_IsPlayerWeaponFired = true;
+	}
+
 }
 
 
@@ -128,7 +156,43 @@ void Game::update(sf::Time elapsedTime)
 
 		entity->m_sprite.move(movement * elapsedTime.asSeconds());
 	}
+
+	HanldeWeaponMoves();
 }
+
+void Game::HanldeWeaponMoves()
+{
+	//
+	// Handle Weapon moves
+	//
+
+	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+	{
+		if (entity->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (entity->m_type != EntityType::weapon)
+		{
+			continue;
+		}
+
+		float x, y;
+		x = entity->m_sprite.getPosition().x;
+		y = entity->m_sprite.getPosition().y;
+		x+=4;
+
+		if (y <= 0)
+		{
+			entity->m_enabled = false;
+			_IsPlayerWeaponFired = false;
+		}
+
+		entity->m_sprite.setPosition(x, y);
+	}
+}
+
 
 void Game::run()
 {
