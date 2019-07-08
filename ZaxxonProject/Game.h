@@ -9,7 +9,6 @@ public:
 	void HanldeWeaponMoves();
 	void run();
 
-
 private: 
 	void InitSprites();
 	void render();
@@ -17,6 +16,9 @@ private:
 	void processEvents();
 
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+	void HandleEnemyMoves();
+	void HandleEnemyWeaponFiring();
+	void HanldeEnemyWeaponMoves();
 
 
 private:
@@ -25,6 +27,9 @@ private:
 
 	sf::Texture	mTexture;
 	sf::Texture	_TextureWeapon;
+	sf::Texture _TextureEnemy1;
+	sf::Texture _TextureWeaponEnemy;
+	sf::Sprite	_Enemy1;
 	sf::Sprite	mPlayer;
 	sf::Font	mFont;
 	sf::Text	mStatisticsText;
@@ -37,7 +42,7 @@ private:
 	bool mIsMovingLeft;
 
 	bool _IsPlayerWeaponFired = false;
-
+	bool _IsEnemyWeaponFired = false;
 
 
 	sf::RenderWindow		mWindow;
