@@ -18,6 +18,8 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <future>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>

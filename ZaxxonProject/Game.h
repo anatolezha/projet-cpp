@@ -19,8 +19,8 @@ private:
 	void HandleEnemyMoves();
 	void HandleEnemyWeaponFiring();
 	void HanldeEnemyWeaponMoves();
-
-
+	void HandleCollisionWeaponEnemy();
+	
 private:
 	static const float		PlayerSpeed;
 	static const sf::Time	TimePerFrame;
@@ -29,7 +29,9 @@ private:
 	sf::Texture	_TextureWeapon;
 	sf::Texture _TextureEnemy1;
 	sf::Texture _TextureWeaponEnemy;
+	sf::Texture _TextureExplosion;
 	sf::Sprite	_Enemy1;
+	sf::Sprite	_Enemy[5][11];
 	sf::Sprite	mPlayer;
 	sf::Font	mFont;
 	sf::Text	mStatisticsText;
