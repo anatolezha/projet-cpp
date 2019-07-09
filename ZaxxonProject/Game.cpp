@@ -299,6 +299,10 @@ void Game::HandleEnemyWeaponFiring()
 			continue;
 		}
 
+		if (!inBounds(entity)) {
+			continue;
+		}
+
 		if (entity->m_type == EntityType::enemy)
 		{
 			float x, y;
@@ -400,5 +404,12 @@ void Game::HandleCollisionWeaponEnemy()
 end:
 	//nop
 	return;
+}
+
+bool Game::inBounds(std::shared_ptr<Entity> entity) {
+	if (entity->m_sprite.getPosition().x > mWindow.getSize().x) {
+		return false;
+	}
+	return true;
 }
 

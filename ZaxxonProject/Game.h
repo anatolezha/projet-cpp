@@ -1,4 +1,5 @@
 #pragma once
+#include "Entity.h"
 
 class Game
 {
@@ -20,6 +21,7 @@ private:
 	void HandleEnemyWeaponFiring();
 	void HanldeEnemyWeaponMoves();
 	void HandleCollisionWeaponEnemy();
+	bool inBounds(std::shared_ptr<Entity> entity);
 	
 private:
 	static const float		PlayerSpeed;
