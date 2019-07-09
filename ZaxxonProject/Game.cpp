@@ -50,9 +50,9 @@ void Game::InitSprites()
 	{
 		for (int j = 0; j < 11; j++)
 		{
-			if (i % 2 != 0 && j % 2 == 0) {
+			if (i % 2 == 0 && j % 2 != 0) {
 				_Enemy[i][j].setTexture(_TextureEnemy1);
-				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 10.f + 50.f * (j + 1));
+				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 55.f * (j ));
 				std::shared_ptr<Entity> se = std::make_shared<Entity>();
 				se->m_sprite = _Enemy[i][j];
 				se->m_type = EntityType::enemy;
@@ -60,9 +60,9 @@ void Game::InitSprites()
 				se->m_position = _Enemy[i][j].getPosition();
 				EntityManager::m_Entities.push_back(se);
 			}
-			else if (i % 2 == 0 && j % 2 != 0) {
+			else if (i % 2 != 0 && j % 2 == 0) {
 				_Enemy[i][j].setTexture(_TextureEnemy1);
-				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 10.f + 50.f * (j + 1));
+				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 55.f * (j ));
 				std::shared_ptr<Entity> se = std::make_shared<Entity>();
 				se->m_sprite = _Enemy[i][j];
 				se->m_type = EntityType::enemy;
@@ -133,12 +133,12 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 
 	if (key == sf::Keyboard::Space)
 	{
-		if (isPressed == false)
+		if (isPressed != false)
 		{
 			return;
 		}
 
-		if (_IsPlayerWeaponFired == true)
+		if (_CountPlayerWeaponFired >= 3)
 		{
 			return;
 		}
@@ -151,7 +151,7 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		sw->m_type = EntityType::weapon;
 		sw->m_size = _TextureWeapon.getSize();
 		EntityManager::m_Entities.push_back(sw);
-		_IsPlayerWeaponFired = true;
+		_CountPlayerWeaponFired++;
 	}
 
 }
@@ -160,13 +160,13 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 void Game::update(sf::Time elapsedTime)
 {
 	sf::Vector2f movement(0.f, 0.f);
-	if (mIsMovingUp)
+	if (mIsMovingUp && EntityManager::GetPlayer()->m_sprite.getPosition().y > 0)
 		movement.y -= PlayerSpeed;
-	if (mIsMovingDown)
+	if (mIsMovingDown && EntityManager::GetPlayer()->m_sprite.getPosition().y < mWindow.getSize().y - EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().y)
 		movement.y += PlayerSpeed;
-	if (mIsMovingLeft)
+	if (mIsMovingLeft && EntityManager::GetPlayer()->m_sprite.getPosition().x > 0)
 		movement.x -= PlayerSpeed;
-	if (mIsMovingRight)
+	if (mIsMovingRight && EntityManager::GetPlayer()->m_sprite.getPosition().x  < mWindow.getSize().x - EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().x)
 		movement.x += PlayerSpeed;
 
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
@@ -218,7 +218,7 @@ void Game::HanldeWeaponMoves()
 		if (x >= mWindow.getSize().x)
 		{
 			entity->m_enabled = false;
-			_IsPlayerWeaponFired = false;
+			_CountPlayerWeaponFired--;
 		}
 
 		entity->m_sprite.setPosition(x, y);
@@ -273,7 +273,6 @@ void Game::HandleEnemyMoves()
 		if (x <= 0)
 		{
 			entity->m_enabled = false;
-			_IsEnemyWeaponFired = false;
 		}
 		else
 		{
@@ -288,8 +287,7 @@ void Game::HandleEnemyMoves()
 
 void Game::HandleEnemyWeaponFiring()
 {
-	
-	if (_IsEnemyWeaponFired == true)
+	if (_CountEnemyWeaponFired >= 3)
 		return;
 	
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
@@ -324,7 +322,7 @@ void Game::HandleEnemyWeaponFiring()
 			sw->m_size = _TextureWeaponEnemy.getSize();
 			EntityManager::m_Entities.push_back(sw);
 
-			_IsEnemyWeaponFired = true;
+			_CountEnemyWeaponFired++;
 			break;
 		}
 	}
@@ -352,7 +350,7 @@ void Game::HanldeEnemyWeaponMoves()
 		if (x <= 0)
 		{
 			entity->m_enabled = false;
-			_IsEnemyWeaponFired = false;
+			_CountEnemyWeaponFired--;
 		}
 		else
 		{
@@ -399,7 +397,7 @@ void Game::HandleCollisionWeaponEnemy()
 			{
 				enemy->m_enabled = false;
 				weapon->m_enabled = false;
-				_IsPlayerWeaponFired = false;
+				_CountPlayerWeaponFired--;
 				goto end;
 			}
 		}

@@ -45,9 +45,8 @@ private:
 	bool mIsMovingRight;
 	bool mIsMovingLeft;
 
-	bool _IsPlayerWeaponFired = false;
-	bool _IsEnemyWeaponFired = false;
-
+	int _CountEnemyWeaponFired = 0;
+	int _CountPlayerWeaponFired = 0;
 
 	sf::RenderWindow		mWindow;
 };
