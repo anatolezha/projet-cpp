@@ -17,10 +17,9 @@ Game::Game() : mWindow(sf::VideoMode(840, 600), "Zaxxon Project", sf::Style::Clo
 {
 	mWindow.setFramerateLimit(160);
 	mTexture.loadFromFile("Media/textures/playerSpaceship.png");
-	_TextureWeapon.loadFromFile("Media/textures/boss.png");
-	_TextureWeaponEnemy.loadFromFile("Media/textures/boss.png");
+	_TextureWeapon.loadFromFile("Media/textures/playerWeapon.png");
+	_TextureWeaponEnemy.loadFromFile("Media/textures/enemyWeapon.png");
 	_TextureEnemy1.loadFromFile("Media/textures/enemy1.png");
-	_TextureExplosion.loadFromFile("Media/textures/enemy1.png");
 	InitSprites();
 }
 
@@ -38,7 +37,6 @@ void Game::InitSprites()
 
 	mPlayer.setTexture(mTexture);
 	mPlayer.setPosition(50.f, 275.f);
-	mPlayer.setRotation(90.f);
 	std::shared_ptr<Entity> player = std::make_shared<Entity>();
 	player->m_sprite = mPlayer;
 	player->m_type = EntityType::player;
@@ -47,17 +45,6 @@ void Game::InitSprites()
 	EntityManager::m_Entities.push_back(player);
 
 
-	//Enemy1
-
-	/*_Enemy1.setTexture(_TextureEnemy1);
-	_Enemy1.setPosition(mWindow.getSize().x + _Enemy1.getTexture()->getSize().x ,275.f);
-	_Enemy1.setRotation(270.f);
-	std::shared_ptr<Entity> se = std::make_shared<Entity>();
-	se->m_sprite = _Enemy1;
-	se->m_type = EntityType::enemy;
-	se->m_size = _TextureEnemy1.getSize();
-	se->m_position = _Enemy1.getPosition();
-	EntityManager::m_Entities.push_back(se);*/
 	int x = 0;
 	for (int i = 0; i < 5; i++)
 	{
@@ -66,7 +53,6 @@ void Game::InitSprites()
 			if (i % 2 != 0 && j % 2 == 0) {
 				_Enemy[i][j].setTexture(_TextureEnemy1);
 				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 10.f + 50.f * (j + 1));
-				_Enemy[i][j].setRotation(270.f);
 				std::shared_ptr<Entity> se = std::make_shared<Entity>();
 				se->m_sprite = _Enemy[i][j];
 				se->m_type = EntityType::enemy;
@@ -77,7 +63,6 @@ void Game::InitSprites()
 			else if (i % 2 == 0 && j % 2 != 0) {
 				_Enemy[i][j].setTexture(_TextureEnemy1);
 				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 10.f + 50.f * (j + 1));
-				_Enemy[i][j].setRotation(270.f);
 				std::shared_ptr<Entity> se = std::make_shared<Entity>();
 				se->m_sprite = _Enemy[i][j];
 				se->m_type = EntityType::enemy;
@@ -161,9 +146,8 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		std::shared_ptr<Entity> sw = std::make_shared<Entity>();
 		sw->m_sprite.setTexture(_TextureWeapon);
 		sw->m_sprite.setPosition(
-			EntityManager::GetPlayer()->m_sprite.getPosition().x + EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().x / 2,
-			EntityManager::GetPlayer()->m_sprite.getPosition().y - 10);
-		sw->m_sprite.setRotation(90.f);
+			EntityManager::GetPlayer()->m_sprite.getPosition().x + EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().y / 2,
+			EntityManager::GetPlayer()->m_sprite.getPosition().y + EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().y / 2);
 		sw->m_type = EntityType::weapon;
 		sw->m_size = _TextureWeapon.getSize();
 		EntityManager::m_Entities.push_back(sw);
@@ -320,15 +304,14 @@ void Game::HandleEnemyWeaponFiring()
 			float x, y;
 			x = entity->m_sprite.getPosition().x;
 			y = entity->m_sprite.getPosition().y;
-			y--;
+			
 
 			std::shared_ptr<Entity> sw = std::make_shared<Entity>();
 			sw->m_sprite.setTexture(_TextureWeaponEnemy);
 			sw->m_sprite.setPosition(
-				x - _TextureWeaponEnemy.getSize().x/2 ,
-				y + 10);
+				x ,
+				y + _TextureEnemy1.getSize().x / 2 );
 
-			sw->m_sprite.setRotation(270.F);
 			sw->m_type = EntityType::enemyWeapon;
 			sw->m_size = _TextureWeaponEnemy.getSize();
 			EntityManager::m_Entities.push_back(sw);
