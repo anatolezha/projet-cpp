@@ -305,6 +305,10 @@ void Game::HandleEnemyWeaponFiring()
 
 		if (entity->m_type == EntityType::enemy)
 		{
+			int r = rand() % 20;
+			if (r != 10)
+				continue;
+
 			float x, y;
 			x = entity->m_sprite.getPosition().x;
 			y = entity->m_sprite.getPosition().y;
