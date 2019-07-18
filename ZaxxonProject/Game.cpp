@@ -20,6 +20,8 @@ Game::Game() : mWindow(sf::VideoMode(840, 600), "Zaxxon Project", sf::Style::Clo
 	_TextureWeapon.loadFromFile("Media/textures/playerWeapon.png");
 	_TextureWeaponEnemy.loadFromFile("Media/textures/enemyWeapon.png");
 	_TextureEnemy1.loadFromFile("Media/textures/enemy1.png");
+	mFont.loadFromFile("Media/Font/ARCADECLASSIC.TTF");
+
 	InitSprites();
 }
 
@@ -30,7 +32,9 @@ Game::~Game()
 
 void Game::InitSprites()
 {
-
+	_lives = 3;
+	_score = 0;
+	_IsGameOver = false;
 	//
 	// Player
 	// Initialisation du sprite du joueur (texture, position, rotation) puis ajout à l'entity manager pour l'afficher
@@ -74,6 +78,26 @@ void Game::InitSprites()
 		x += 200;
 	}
 
+	//
+	// Lives
+	//
+
+	_LivesText.setFillColor(sf::Color::Green);
+	_LivesText.setFont(mFont);
+	_LivesText.setPosition(10.f, 50.f);
+	_LivesText.setCharacterSize(20);
+	_LivesText.setString(std::to_string(_lives));
+
+	//
+	// Text
+	//
+
+	_ScoreText.setFillColor(sf::Color::Green);
+	_ScoreText.setFont(mFont);
+	_ScoreText.setPosition(10.f, 100.f);
+	_ScoreText.setCharacterSize(20);
+	_ScoreText.setString(std::to_string(_score));
+
 }
 
 void Game::render()
@@ -91,7 +115,11 @@ void Game::render()
 		mWindow.draw(entity->m_sprite);
 	}
 
-	//afichage de la fenêtre	
+	//afichage de la fenêtre
+
+	mWindow.draw(_LivesText);
+	mWindow.draw(_ScoreText);
+	mWindow.draw(mText);
 	mWindow.display();
 }
 
@@ -183,8 +211,13 @@ void Game::update(sf::Time elapsedTime)
 
 		entity->m_sprite.move(movement * elapsedTime.asSeconds());
 	}
-
+	if (_IsGameOver == true)
+		return;
+	HandleTexts();
+	HandleGameOver();
 	HandleCollisionWeaponEnemy();
+	HandleCollisionWeaponPlayer();
+	HandleCollisionEnemyPlayer();
 	HanldeWeaponMoves();
 	HandleEnemyWeaponFiring();
 	HanldeEnemyWeaponMoves();
@@ -248,6 +281,15 @@ void Game::run()
 
 }
 
+
+void Game::HandleTexts()
+{
+	std::string lives = "Lives  " + std::to_string(_lives);
+	_LivesText.setString(lives);
+	std::string score = "Score  " + std::to_string(_score);
+	_ScoreText.setString(score);
+	return;
+}
 void Game::HandleEnemyMoves()
 {
 
@@ -398,6 +440,7 @@ void Game::HandleCollisionWeaponEnemy()
 				enemy->m_enabled = false;
 				weapon->m_enabled = false;
 				_CountPlayerWeaponFired--;
+				_score += 10;
 				goto end;
 			}
 		}
@@ -407,6 +450,100 @@ end:
 	//nop
 	return;
 }
+
+void Game::HandleCollisionEnemyPlayer()
+{
+	for (std::shared_ptr<Entity> enemy : EntityManager::m_Entities)
+	{
+		if (enemy->m_type != EntityType::enemy)
+		{
+			continue;
+		}
+
+		if (enemy->m_enabled == false)
+		{
+			continue;
+		}
+
+		sf::FloatRect boundEnemy;
+		boundEnemy = enemy->m_sprite.getGlobalBounds();
+
+		sf::FloatRect boundPlayer;
+		boundPlayer = EntityManager::GetPlayer()->m_sprite.getGlobalBounds();
+
+		if (boundEnemy.intersects(boundPlayer) == true)
+		{
+			enemy->m_enabled = false;
+			_lives--;
+			goto end;
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
+void Game::HandleCollisionWeaponPlayer()
+{
+	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
+	{
+		if (weapon->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (weapon->m_type != EntityType::enemyWeapon)
+		{
+			continue;
+		}
+
+		sf::FloatRect boundWeapon;
+		boundWeapon = weapon->m_sprite.getGlobalBounds();
+
+		sf::FloatRect boundPlayer;
+		boundPlayer = EntityManager::GetPlayer()->m_sprite.getGlobalBounds();
+
+		if (boundWeapon.intersects(boundPlayer) == true)
+		{
+			weapon->m_enabled = false;
+			_CountEnemyWeaponFired--;
+			_lives--;
+			goto end;
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
+
+void Game::HandleGameOver()
+{
+	
+	if (_lives == 0)
+	{
+		DisplayGameOver();
+	}
+}
+
+void Game::DisplayGameOver()
+{
+	
+		mText.setFillColor(sf::Color::Green);
+		mText.setFont(mFont);
+		mText.setPosition(200.f, 200.f);
+		mText.setCharacterSize(80);
+		mText.setString("GAME OVER");
+
+		_ScoreText.setPosition(260.f, 270.f);
+		_ScoreText.setCharacterSize(60);
+
+		_IsGameOver = true;
+	
+}
+
 
 bool Game::inBounds(std::shared_ptr<Entity> entity) {
 	if (entity->m_sprite.getPosition().x > mWindow.getSize().x) {
