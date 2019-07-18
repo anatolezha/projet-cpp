@@ -7,6 +7,7 @@ public:
 	Game();
 	~Game();
 	void update(sf::Time elapsedTime);
+	
 	void HanldeWeaponMoves();
 	void run();
 
@@ -16,7 +17,7 @@ private:
 
 	void processEvents();
 	void HandleTexts();
-
+	void GenerateEnemies();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 	void HandleEnemyMoves();
 	void HandleEnemyWeaponFiring();
@@ -40,8 +41,6 @@ private:
 	sf::Texture _TextureEnemy1;
 	sf::Texture _TextureWeaponEnemy;
 	sf::Texture _TextureExplosion;
-	sf::Sprite	_Enemy1;
-	sf::Sprite	_Enemy[5][11];
 	sf::Sprite	mPlayer;
 	sf::Font	mFont;
 	sf::Text	mText;
@@ -59,6 +58,7 @@ private:
 
 	int _CountEnemyWeaponFired = 0;
 	int _CountPlayerWeaponFired = 0;
+	int _SecondElapsed = 0;
 
 	sf::RenderWindow		mWindow;
 };

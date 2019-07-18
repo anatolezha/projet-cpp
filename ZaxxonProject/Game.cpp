@@ -3,7 +3,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 
-const float Game::PlayerSpeed = 100.f;
+const float Game::PlayerSpeed = 150.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game() : mWindow(sf::VideoMode(840, 600), "Zaxxon Project", sf::Style::Close)
@@ -47,36 +47,6 @@ void Game::InitSprites()
 	player->m_size = mTexture.getSize();
 	player->m_position = mPlayer.getPosition();
 	EntityManager::m_Entities.push_back(player);
-
-
-	int x = 0;
-	for (int i = 0; i < 5; i++)
-	{
-		for (int j = 0; j < 11; j++)
-		{
-			if (i % 2 == 0 && j % 2 != 0) {
-				_Enemy[i][j].setTexture(_TextureEnemy1);
-				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 55.f * (j ));
-				std::shared_ptr<Entity> se = std::make_shared<Entity>();
-				se->m_sprite = _Enemy[i][j];
-				se->m_type = EntityType::enemy;
-				se->m_size = _TextureEnemy1.getSize();
-				se->m_position = _Enemy[i][j].getPosition();
-				EntityManager::m_Entities.push_back(se);
-			}
-			else if (i % 2 != 0 && j % 2 == 0) {
-				_Enemy[i][j].setTexture(_TextureEnemy1);
-				_Enemy[i][j].setPosition(840 + 100.f + 50.f * (i + 1) + x, 55.f * (j ));
-				std::shared_ptr<Entity> se = std::make_shared<Entity>();
-				se->m_sprite = _Enemy[i][j];
-				se->m_type = EntityType::enemy;
-				se->m_size = _TextureEnemy1.getSize();
-				se->m_position = _Enemy[i][j].getPosition();
-				EntityManager::m_Entities.push_back(se);
-			}
-		}
-		x += 200;
-	}
 
 	//
 	// Lives
@@ -187,6 +157,8 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 
 void Game::update(sf::Time elapsedTime)
 {
+	if (_IsGameOver == true)
+		return;
 	sf::Vector2f movement(0.f, 0.f);
 	if (mIsMovingUp && EntityManager::GetPlayer()->m_sprite.getPosition().y > 0)
 		movement.y -= PlayerSpeed;
@@ -211,8 +183,8 @@ void Game::update(sf::Time elapsedTime)
 
 		entity->m_sprite.move(movement * elapsedTime.asSeconds());
 	}
-	if (_IsGameOver == true)
-		return;
+	
+	GenerateEnemies();
 	HandleTexts();
 	HandleGameOver();
 	HandleCollisionWeaponEnemy();
@@ -223,6 +195,28 @@ void Game::update(sf::Time elapsedTime)
 	HanldeEnemyWeaponMoves();
 	HandleEnemyMoves();
 
+}
+
+void Game::GenerateEnemies()
+{
+	if (_SecondElapsed == 66) {
+		sf::Sprite newEnemy;
+		newEnemy.setTexture(_TextureEnemy1);
+		int r = rand() % (600 - _TextureEnemy1.getSize().y) + 1;
+		newEnemy.setPosition(840, r);
+		std::shared_ptr<Entity> se = std::make_shared<Entity>();
+		se->m_sprite = newEnemy;
+		se->m_type = EntityType::enemy;
+		se->m_size = _TextureEnemy1.getSize();
+		se->m_position = newEnemy.getPosition();
+		EntityManager::m_Entities.push_back(se);
+
+
+		_SecondElapsed = 0;
+	} else {
+		_SecondElapsed += 1;
+		//std::cout << _SecondElapsed;
+	}
 }
 
 void Game::HanldeWeaponMoves()
@@ -246,7 +240,7 @@ void Game::HanldeWeaponMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-		x+=4;
+		x+=6;
 
 		if (x >= mWindow.getSize().x)
 		{
@@ -281,7 +275,6 @@ void Game::run()
 
 }
 
-
 void Game::HandleTexts()
 {
 	std::string lives = "Lives  " + std::to_string(_lives);
@@ -290,6 +283,7 @@ void Game::HandleTexts()
 	_ScoreText.setString(score);
 	return;
 }
+
 void Game::HandleEnemyMoves()
 {
 
@@ -308,7 +302,7 @@ void Game::HandleEnemyMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-		x -= 1.0f;
+		x -= 2.0f;
 
 
 
@@ -387,7 +381,7 @@ void Game::HanldeEnemyWeaponMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-		x -= 4.0f;
+		x -= 6.0f;
 
 		if (x <= 0)
 		{
