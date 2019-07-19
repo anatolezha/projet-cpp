@@ -1,4 +1,9 @@
 # projet-cpp
+Projet C++ pour l'ESGI
+
+Auteurs :
+Nils Lapotre
+Anatole Zhâ
 
 Nous avons inclus la librairie SFML dans le projet pour pouvoir le lancer plus facilement, d'où la taille importante du repository.
 Vous pouvez ouvrir le ZaxxonProject.vcxproj pour executer le projet dans visual studio.
