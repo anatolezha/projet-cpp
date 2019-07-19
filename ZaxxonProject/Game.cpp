@@ -121,6 +121,7 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {
 	if (_IsGameOver == true)
 		return;
+
 	if (key == sf::Keyboard::Up)
 		mIsMovingUp = isPressed;
 	else if (key == sf::Keyboard::Down)
