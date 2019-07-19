@@ -119,6 +119,8 @@ void Game::processEvents()
 
 void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {
+	if (_IsGameOver == true)
+		return;
 	if (key == sf::Keyboard::Up)
 		mIsMovingUp = isPressed;
 	else if (key == sf::Keyboard::Down)
@@ -199,7 +201,8 @@ void Game::update(sf::Time elapsedTime)
 
 void Game::GenerateEnemies()
 {
-	if (_SecondElapsed == 66) {
+	if (_SecondElapsed == 50) {
+		
 		sf::Sprite newEnemy;
 		newEnemy.setTexture(_TextureEnemy1);
 		int r = rand() % (600 - _TextureEnemy1.getSize().y) + 1;
